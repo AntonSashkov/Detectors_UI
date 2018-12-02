@@ -10,6 +10,9 @@ import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
+    paper: {
+        borderRadius: '10px'
+    },
     container: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -53,6 +56,7 @@ class AddDetectorForm extends React.Component {
 
         return (
             <Dialog
+                classes={{paper: classes.paper}}
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="form-dialog-title"

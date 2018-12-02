@@ -13,6 +13,7 @@ import CollapsableList from "../components/CollapsableList";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import AddDetectorForm from "../components/AddDetectorForm";
 import Tooltip from "@material-ui/core/Tooltip/Tooltip";
+import InfoDialog from "../components/InfoDialog";
 
 const styles = theme => ({
     root: {
@@ -41,12 +42,15 @@ class NestedList extends React.Component {
         isHeatingSectionOpen: false,
         isIlluminationSectionOpen: false,
 
-        addDetectorFormDialog: false
+        addDetectorFormDialogOpen: false,
+        infoDialogOpen: false,
+
+        actionTaken: false
     };
 
     render() {
-        const {classes} = this.props;
-        const {isFoodSectionOpen, isWateringSectionOpen, isHeatingSectionOpen, isIlluminationSectionOpen, addDetectorFormDialog} = this.state;
+        const {classes, doAction} = this.props;
+        const {isFoodSectionOpen, isWateringSectionOpen, isHeatingSectionOpen, isIlluminationSectionOpen, addDetectorFormDialogOpen, infoDialogOpen} = this.state;
 
         return (
             <div className={classes.root}>
@@ -58,7 +62,7 @@ class NestedList extends React.Component {
                                 <Tooltip title="Добавить устройство" disableFocusListener>
                                     <IconButton
                                         className={classes.addButton}
-                                        onClick={() => this.setState({addDetectorFormDialog: true})}>
+                                        onClick={() => this.setState({addDetectorFormDialogOpen: true})}>
                                         <Icon>add</Icon>
                                     </IconButton>
                                 </Tooltip>
@@ -66,9 +70,9 @@ class NestedList extends React.Component {
                         }
                 >
                     <AddDetectorForm
-                        open={addDetectorFormDialog}
+                        open={addDetectorFormDialogOpen}
                         handleClose={() => {
-                            this.setState({addDetectorFormDialog: false});
+                            this.setState({addDetectorFormDialogOpen: false});
                         }}/>
 
                     {/*Food Section*/}
@@ -85,7 +89,8 @@ class NestedList extends React.Component {
                         <ListItemText inset primary="Кормление"/>
                         {isFoodSectionOpen ? <ExpandLess/> : <ExpandMore/>}
                     </ListItem>
-                    <CollapsableList open={isFoodSectionOpen}/>
+                    <CollapsableList open={isFoodSectionOpen} openInfo={() => this.setState({infoDialogOpen: true})}
+                                     detectorName="Кормушка для рыб"/>
 
                     {/*Watering Section*/}
                     <ListItem
@@ -102,7 +107,8 @@ class NestedList extends React.Component {
                         <ListItemText inset primary="Полив"/>
                         {isWateringSectionOpen ? <ExpandLess/> : <ExpandMore/>}
                     </ListItem>
-                    <CollapsableList open={isWateringSectionOpen}/>
+                    <CollapsableList open={isWateringSectionOpen} openInfo={() => this.setState({infoDialogOpen: true})}
+                                     detectorName="Датчик 1"/>
 
                     {/*Heating Section*/}
                     <ListItem
@@ -119,7 +125,8 @@ class NestedList extends React.Component {
                         <ListItemText inset primary="Отопление"/>
                         {isHeatingSectionOpen ? <ExpandLess/> : <ExpandMore/>}
                     </ListItem>
-                    <CollapsableList open={isHeatingSectionOpen}/>
+                    <CollapsableList open={isHeatingSectionOpen} openInfo={() => this.setState({infoDialogOpen: true})}
+                                     detectorName="Датчик 1"/>
 
                     {/*Illumination Section*/}
                     <ListItem
@@ -136,7 +143,16 @@ class NestedList extends React.Component {
                         <ListItemText inset primary="Освещение"/>
                         {isIlluminationSectionOpen ? <ExpandLess/> : <ExpandMore/>}
                     </ListItem>
-                    <CollapsableList open={isIlluminationSectionOpen}/>
+                    <CollapsableList open={isIlluminationSectionOpen}
+                                     openInfo={() => this.setState({infoDialogOpen: true})} detectorName="Датчик 1"/>
+
+                    <InfoDialog
+                        open={infoDialogOpen}
+                        handleClose={() => {
+                            this.setState({infoDialogOpen: false});
+                        }}
+                        doAction={doAction}
+                    />
                 </List>
             </div>
         );

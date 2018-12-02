@@ -16,16 +16,16 @@ const styles = theme => ({
 
 class CollapsableList extends React.Component {
     render() {
-        const {classes, open} = this.props;
+        const {classes, open, openInfo, detectorName} = this.props;
 
         return (
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItem button className={classes.nested}>
+                    <ListItem button className={classes.nested} onClick={openInfo}>
                         <ListItemIcon>
                             <Icon>adb</Icon>
                         </ListItemIcon>
-                        <ListItemText inset primary="Датчик 1"/>
+                        <ListItemText inset primary={detectorName}/>
                     </ListItem>
                 </List>
             </Collapse>
