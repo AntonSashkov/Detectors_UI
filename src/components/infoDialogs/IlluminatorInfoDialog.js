@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from "@material-ui/core/Typography/Typography";
+import axios from "axios";
 
 const styles = theme => ({
     paper: {
@@ -30,22 +31,20 @@ const styles = theme => ({
     }
 });
 
-class InfoDialog extends React.Component {
+class HeaterInfoDialog extends React.Component {
     state = {
-        timeOfLastFeeding: '01.01.2018 18:00',
-        period: '6',
-        address: '127.0.0.1',
-        name: 'Кормушка для рыб',
+        brightness: '',
+        address: '',
+        name: '',
 
-        timeOfLastFeedingClicked: false,
-        periodClicked: false,
+        brightnessClicked: false,
         addressClicked: false,
         nameClicked: false,
     };
 
     render() {
-        const {open, handleClose, classes, doAction} = this.props;
-        const {timeOfLastFeeding, period, address, name, timeOfLastFeedingClicked, periodClicked, addressClicked, nameClicked} = this.state;
+        const {open, handleClose, classes, doAction, detectorInfo, triggerUpdate} = this.props;
+        const {address, name, addressClicked, nameClicked, brightnessClicked, brightness} = this.state;
 
         return (
             <Dialog
@@ -59,50 +58,32 @@ class InfoDialog extends React.Component {
                     <strong>Информация о датчике</strong>
                 </DialogTitle>
                 <DialogContent classes={{root: classes.dialogContentRoot}}>
-                    {!timeOfLastFeedingClicked ?
+                    {!brightnessClicked ?
                         <Typography
                             gutterBottom
                             variant='subheading'
                             onClick={() => {
-                                this.setState({timeOfLastFeedingClicked: true})
+                                this.setState({
+                                    brightnessClicked: true
+                                });
                             }}
                         >
-                            <strong>Последнее кормление: {timeOfLastFeeding}</strong>
+                            <strong>
+                                Яркость: {detectorInfo.brightness}
+                            </strong>
                         </Typography> :
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Последнее кормление"
+                            label="Яркость"
                             fullWidth
-                            value={timeOfLastFeeding}
-                            onBlur={() => this.setState({timeOfLastFeedingClicked: false})}
-                            onChange={(e) => this.setState({timeOfLastFeeding: e.target.value})}
-                        />
-                    }
-
-                    {!periodClicked ?
-                        <Typography
-                            gutterBottom
-                            variant='subheading'
-                            onClick={() => {
-                                this.setState({periodClicked: true});
-                            }}
-                        >
-                            <strong>Период(ч): {period}</strong>
-                        </Typography> :
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label="Период(ч)"
-                            fullWidth
-                            value={period}
+                            value={brightness}
                             onBlur={() => {
-                                this.setState({periodClicked: false});
+                                this.setState({brightnessClicked: false});
                             }}
-                            onChange={(e) => this.setState({period: e.target.value})}
+                            onChange={(e) => this.setState({brightness: e.target.value})}
                         />
                     }
-
                     {!addressClicked ?
                         <Typography
                             gutterBottom
@@ -114,7 +95,7 @@ class InfoDialog extends React.Component {
                             }}
                         >
                             <strong>
-                                Адрес: {address}
+                                Адрес: {detectorInfo.address}
                             </strong>
                         </Typography> :
                         <TextField
@@ -141,7 +122,7 @@ class InfoDialog extends React.Component {
                             }}
                         >
                             <strong>
-                                Имя: {name}
+                                Имя: {detectorInfo.name}
                             </strong>
                         </Typography> :
                         <TextField
@@ -162,10 +143,17 @@ class InfoDialog extends React.Component {
                 <DialogActions>
                     <Button variant='outlined'
                             onClick={() => {
-                                doAction('Ням-ням');
+                                doAction('Датчик выключен');
                                 handleClose();
+                                /*axios.post(`http://localhost:8080/feeders/${detectorInfo.address}/food`)
+                                    .then(reponse => {
+                                        triggerUpdate("feeders");
+                                        doAction('Ням-ням');
+                                        handleClose();
+                                    })
+                                    .catch();*/
                             }} color="primary">
-                        Покормить
+                        Изменить
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -173,4 +161,4 @@ class InfoDialog extends React.Component {
     }
 }
 
-export default withStyles(styles)(InfoDialog);
+export default withStyles(styles)(HeaterInfoDialog);

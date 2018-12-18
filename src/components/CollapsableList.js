@@ -16,17 +16,37 @@ const styles = theme => ({
 
 class CollapsableList extends React.Component {
     render() {
-        const {classes, open, openInfo, detectorName} = this.props;
+        const {classes, open, openInfo, data} = this.props;
 
         return (
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItem button className={classes.nested} onClick={openInfo}>
+                    {
+                        open && data.slice(0, 3).map((element, index) => {
+                            return (
+                                <ListItem
+                                    key={`k${index}`}
+                                    button
+                                    className={classes.nested}
+                                    onClick={() => openInfo(element)}
+                                >
+                                    <ListItemIcon>
+                                        <Icon>adb</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText inset primary={element.name}/>
+                                </ListItem>
+                            )
+                        })
+                    }
+                    {open && data.length > 3 &&
+                    <ListItem button className={classes.nested}>
                         <ListItemIcon>
                             <Icon>adb</Icon>
                         </ListItemIcon>
-                        <ListItemText inset primary={detectorName}/>
+                        <ListItemText inset primary="..."/>
                     </ListItem>
+                    }
+
                 </List>
             </Collapse>
         );

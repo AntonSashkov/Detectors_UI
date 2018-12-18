@@ -71,15 +71,31 @@ class AddDetectorForm extends React.Component {
 
     addDetector = () => {
         const {type, address, name} = this.state;
-        const {doAction, handleClose} = this.props;
+        const {doAction, handleClose, triggerUpdate} = this.props;
 
         this.setState({creatingLoader: true});
 
-        axios.post(`http://localhost:8080/${type}`, {address, name})
+        let payload = {name, address};
+        if (type === 'feeders') {
+            payload.timeOfLastFeeding = new Date(Date.parse(new Date().toLocaleString()));
+            payload.period = 8;
+        }
+        if (type === 'sprinklers') {
+            payload.timeofLastWatering = new Date(Date.parse(new Date().toLocaleString()));
+        }
+        if (type === 'heaters') {
+            payload.temperature = 100;
+        }
+        if (type === 'illuminators') {
+            payload.brightness = 50;
+        }
+
+        axios.post(`http://localhost:8080/${type}`, payload)
             .then(response => {
                     setTimeout(() => {
                         handleClose();
                         doAction("Датчик успешно добавлен!");
+                        triggerUpdate(type);
                         this.setState(this.baseState);
                     }, 2000);
                 }
