@@ -7,11 +7,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
+import CircularProgress from "@material-ui/core/es/CircularProgress/CircularProgress";
+
+const axios = require('axios');
 
 const styles = theme => ({
     paper: {
-        borderRadius: '10px'
+        borderRadius: '10px',
+        overflow: 'hidden'
     },
     container: {
         display: 'flex',
@@ -25,34 +29,66 @@ const styles = theme => ({
     dense: {
         marginTop: 19,
     },
+    loader: {
+        margin: '0 auto'
+    }
 });
 
 const currencies = [
     {
-        value: 'USD',
+        value: 'feeders',
         label: 'Кормление',
     },
     {
-        value: 'EUR',
+        value: 'sprinklers',
         label: 'Полив',
     },
     {
-        value: 'BTC',
+        value: 'heaters',
         label: 'Отопление',
     },
     {
-        value: 'JPY',
+        value: 'illuminators',
         label: 'Освещение',
     },
 ];
 
 class AddDetectorForm extends React.Component {
-    state={
-        type: ''
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            type: '',
+            address: '',
+            name: '',
+
+            creatingLoader: false
+        };
+
+        this.baseState = this.state
+    }
+
+
+    addDetector = () => {
+        const {type, address, name} = this.state;
+        const {doAction, handleClose} = this.props;
+
+        this.setState({creatingLoader: true});
+
+        axios.post(`http://localhost:8080/${type}`, {address, name})
+            .then(response => {
+                    setTimeout(() => {
+                        handleClose();
+                        doAction("Датчик успешно добавлен!");
+                        this.setState(this.baseState);
+                    }, 2000);
+                }
+            ).catch(error => console.log(error));
     };
 
     render() {
         const {open, handleClose, classes} = this.props;
+        const {creatingLoader, type, address, name} = this.state;
 
         return (
             <Dialog
@@ -87,23 +123,34 @@ class AddDetectorForm extends React.Component {
                         ))}
                     </TextField>
                     <TextField
+                        onChange={(e) => this.setState({address: e.target.value})}
                         margin="dense"
                         label="Адрес"
                         fullWidth
                     />
                     <TextField
+                        onChange={(e) => this.setState({name: e.target.value})}
                         margin="dense"
                         label="Имя"
                         fullWidth
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Отмена
-                    </Button>
-                    <Button onClick={handleClose} color="primary">
-                        Добавить
-                    </Button>
+                    {
+                        creatingLoader ? <CircularProgress className={classes.loader}/> :
+                            <>
+                                <Button onClick={handleClose} color="primary">
+                                    Отмена
+                                </Button>
+                                <Button
+                                    disabled={type === '' || address === '' || name === ""}
+                                    color="primary"
+                                    onClick={() => this.addDetector()}
+                                >
+                                    Добавить
+                                </Button>
+                            </>
+                    }
                 </DialogActions>
             </Dialog>
         );

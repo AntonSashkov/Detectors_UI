@@ -8,7 +8,8 @@ const horizontal = 'center';
 
 class App extends Component {
     state = {
-        actionTaken: false
+        actionTaken: false,
+        message: ''
     };
 
     componentDidUpdate() {
@@ -20,7 +21,7 @@ class App extends Component {
     }
 
     render() {
-        const {actionTaken} = this.state;
+        const {actionTaken, message} = this.state;
 
         return (
             <div className="App">
@@ -30,9 +31,9 @@ class App extends Component {
                     ContentProps={{
                         'aria-describedby': 'message-id',
                     }}
-                    message={<span>Ням-ням</span>}
+                    message={<span>{message}</span>}
                 />
-                <DetectorsList doAction={() => this.setState({actionTaken: true})}/>
+                <DetectorsList doAction={message => this.setState({actionTaken: true, message})}/>
             </div>
         );
     }

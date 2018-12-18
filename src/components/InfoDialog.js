@@ -162,7 +162,7 @@ class InfoDialog extends React.Component {
                 <DialogActions>
                     <Button variant='outlined'
                             onClick={() => {
-                                doAction();
+                                doAction('Ням-ням');
                                 handleClose();
                             }} color="primary">
                         Покормить

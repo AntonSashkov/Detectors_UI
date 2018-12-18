@@ -70,6 +70,7 @@ class NestedList extends React.Component {
                         }
                 >
                     <AddDetectorForm
+                        doAction={doAction}
                         open={addDetectorFormDialogOpen}
                         handleClose={() => {
                             this.setState({addDetectorFormDialogOpen: false});
